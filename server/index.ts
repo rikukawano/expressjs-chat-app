@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, serverTimestamp } from "firebase/database";
+import { getDatabase, ref, set, remove, serverTimestamp } from "firebase/database";
 
 import express from "express";
 import { Request, Response } from "express";
@@ -27,22 +27,7 @@ const port: number = 3000;
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-async function writeUserData(username: string) {
-  const db = getDatabase(firebase);
-  const userRef = ref(db, `users/${username}`);
-  await set(userRef, {
-    username: username,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  });
-  return userRef;
-}
-
-app.post("/create-user", async (req: Request, res: Response) => {
+app.post("/user", async (req: Request, res: Response) => {
   try {
     const { username } = req.body;
 
@@ -61,6 +46,39 @@ app.post("/create-user", async (req: Request, res: Response) => {
   }
 });
 
+app.delete("/user", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+  
+    if (!id || typeof id !== "string") {
+      return res.status(400).json({ error: "Invalid or missing user id in request body." });
+    }
+
+    const db = getDatabase(firebase);
+    const userRef = ref(db, `users/${id}`);
+  
+    await remove(userRef);
+  
+    res.status(200).json({
+      message: "User deleted successfully"
+    });
+  } catch (e: any) {
+    console.error("An error occurred:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+async function writeUserData(username: string) {
+  const db = getDatabase(firebase);
+  const userRef = ref(db, `users/${username}`);
+  await set(userRef, {
+    username: username,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return userRef;
+}

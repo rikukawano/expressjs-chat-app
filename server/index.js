@@ -32,22 +32,7 @@ const firebase = (0, app_1.initializeApp)(firebaseConfig);
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(express_1.default.json());
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-});
-function writeUserData(username) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const db = (0, database_1.getDatabase)(firebase);
-        const userRef = (0, database_1.ref)(db, `users/${username}`);
-        yield (0, database_1.set)(userRef, {
-            username: username,
-            createdAt: (0, database_1.serverTimestamp)(),
-            updatedAt: (0, database_1.serverTimestamp)(),
-        });
-        return userRef;
-    });
-}
-app.post("/create-user", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/user", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username } = req.body;
         if (!username || typeof username !== "string")
@@ -63,6 +48,36 @@ app.post("/create-user", (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(500).json({ error: e.message });
     }
 }));
+app.delete("/user", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.body;
+        if (!id || typeof id !== "string") {
+            return res.status(400).json({ error: "Invalid or missing user id in request body." });
+        }
+        const db = (0, database_1.getDatabase)(firebase);
+        const userRef = (0, database_1.ref)(db, `users/${id}`);
+        yield (0, database_1.remove)(userRef);
+        res.status(200).json({
+            message: "User deleted successfully"
+        });
+    }
+    catch (e) {
+        console.error("An error occurred:", e);
+        res.status(500).json({ error: e.message });
+    }
+}));
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
+function writeUserData(username) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const db = (0, database_1.getDatabase)(firebase);
+        const userRef = (0, database_1.ref)(db, `users/${username}`);
+        yield (0, database_1.set)(userRef, {
+            username: username,
+            createdAt: (0, database_1.serverTimestamp)(),
+            updatedAt: (0, database_1.serverTimestamp)(),
+        });
+        return userRef;
+    });
+}
