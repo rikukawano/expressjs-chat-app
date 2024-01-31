@@ -1,7 +1,7 @@
+import { Sidebar } from "lucide-react";
 import "./App.css";
-import Navbar from "./components/Navbar";
 import { AppProvider } from "./contexts/AppContext";
-import Chats from "./pages/Chats";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -11,8 +11,8 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "/chats",
-    element: <Chats />,
+    path: "/home",
+    element: <Home />,
   },
 ]);
 

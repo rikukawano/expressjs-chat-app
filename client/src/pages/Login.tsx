@@ -23,7 +23,7 @@ const Login: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         dispatch({ type: "SET_USER", payload: {id: data.userId, username: username} });
-        navigate("/chats");
+        navigate("/home");
       } else {
         throw new Error("Failed to create user");
       }
