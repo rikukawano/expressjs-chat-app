@@ -1,4 +1,3 @@
-import { Sidebar } from "lucide-react";
 import "./App.css";
 import { AppProvider } from "./contexts/AppContext";
 import Home from "./pages/Home";
