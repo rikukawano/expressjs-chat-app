@@ -1,10 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, remove, serverTimestamp } from "firebase/database";
-
 import express from "express";
 import { Request, Response } from "express";
-
 import dotenv from "dotenv";
+import path from 'path';
 
 dotenv.config();
 
@@ -26,6 +25,14 @@ const app: express.Application = express();
 const port: number = 3000;
 
 app.use(express.json());
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+// Handle React routing, return all requests to React app
+app.get('*', function(req: Request, res: Response) {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+});
 
 app.post("/user", async (req: Request, res: Response) => {
   try {

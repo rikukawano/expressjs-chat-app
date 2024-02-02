@@ -1,9 +1,7 @@
 import { Fragment, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import { Bars3Icon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useAppContext } from "../contexts/AppContext";
-import { useNavigate } from "react-router-dom";
-import TextInput from "./TextInput";
+import { UserButton } from "@clerk/clerk-react";
 
 const channels = [
   { id: 1, name: "tl:dr", href: "#", current: false },
@@ -17,29 +15,6 @@ function classNames(...classes: string[]) {
 
 export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { state, dispatch } = useAppContext();
-  const navigate = useNavigate();
-
-  const handleSignOut = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/user", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: state.id }),
-      });
-
-      if (response.ok) {
-        dispatch({ type: "SET_USER", payload: { id: null, username: null } });
-        navigate("/");
-      } else {
-        throw new Error("Failed to sign out");
-      }
-    } catch (error) {
-      console.error("Error signing user out:", error);
-    }
-  };
 
   return (
     <>
@@ -181,43 +156,11 @@ export default function Sidebar() {
                 </ul>
               </li>
               <li className="-mx-6 mt-auto">
-                <Menu as="div" className="relative">
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="w-40 ml-4 bg-white divide-y divide-gray-100 rounded-md shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none z-10 relative">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                            onClick={handleSignOut}
-                          >
-                            Sign out
-                          </a>
-                        )}
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Transition>
-                  <Menu.Button className="w-full flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50">
-                    <img
-                      className="h-8 w-8 rounded-full bg-gray-50"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
-                    <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">{state.username}</span>
-                  </Menu.Button>
-                </Menu>
+                <div className="relative">
+                  <div className="w-full flex items-center p-6">
+                    <UserButton afterSignOutUrl='/sign-in' />
+                  </div>
+                </div>
               </li>
             </ul>
           </nav>

@@ -16,6 +16,7 @@ const app_1 = require("firebase/app");
 const database_1 = require("firebase/database");
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const path_1 = __importDefault(require("path"));
 dotenv_1.default.config();
 const firebaseConfig = {
     apiKey: process.env.API_KEY,
@@ -32,6 +33,12 @@ const firebase = (0, app_1.initializeApp)(firebaseConfig);
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(express_1.default.json());
+// Serve static files from the React app
+app.use(express_1.default.static(path_1.default.join(__dirname, '../client/build')));
+// Handle React routing, return all requests to React app
+app.get('*', function (req, res) {
+    res.sendFile(path_1.default.join(__dirname, '../client/build', 'index.html'));
+});
 app.post("/user", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username } = req.body;

@@ -1,24 +1,17 @@
-import "./App.css";
+import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import { AppProvider } from "./contexts/AppContext";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Login />,
-  },
-  {
-    path: "/home",
-    element: <Home />,
-  },
-]);
+import Home from "./pages/HomePage";
+import LoginPage from "./pages/SignInPage";
 
 function App() {
   return (
     <AppProvider>
-      <RouterProvider router={router} />
+      <SignedOut>
+        <LoginPage />
+      </SignedOut>
+      <SignedIn>
+        <Home />
+      </SignedIn>
     </AppProvider>
   );
 }

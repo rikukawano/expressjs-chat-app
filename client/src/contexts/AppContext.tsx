@@ -16,6 +16,7 @@ type Action = { type: "SET_USER"; payload: { id: string | null; username: string
 const reducer = (state: IState, action: Action) => {
   switch (action.type) {
     case "SET_USER":
+      console.log(action.payload);
       return {
         ...state,
         id: action.payload.id,
