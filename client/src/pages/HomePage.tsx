@@ -1,6 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
-import TextInput from "../components/TextInput";
+import SendMessageForm from "../components/SendMessageForm";
+import MessageList from "../components/MessageList";
 
 const HomePage: React.FC = () => {
   return (
@@ -8,7 +9,8 @@ const HomePage: React.FC = () => {
       <Sidebar />
       <div className="flex-1 flex-col overflow-auto lg:pl-72">
         <div className="h-full flex flex-col justify-end px-4 pb-4">
-          <TextInput />
+          <MessageList />
+          <SendMessageForm />
         </div>
       </div>
     </div>
