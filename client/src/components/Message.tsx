@@ -1,94 +1,53 @@
-const Message: React.FC = () => {
+import { useUser } from "@clerk/clerk-react";
+
+interface MessageProps {
+  senderId: string;
+  senderUsername: string;
+  content: string;
+  timestamp: Date;
+}
+
+const Message: React.FC<MessageProps> = ({
+  senderId,
+  senderUsername,
+  content,
+  timestamp,
+}) => {
+  const { user } = useUser();
+  const isCurrentUser = user?.id === senderId;
+
+  const messageClassNames = isCurrentUser
+    ? "flex items-start gap-2.5 justify-end"
+    : "flex items-start gap-2.5";
+
+  const messageBubbleClassNames = isCurrentUser
+    ? "flex flex-col gap-1 max-w-[320px] items-end"
+    : "flex flex-col gap-1 max-w-[320px]";
+
+  const messageContentClassNames = isCurrentUser
+    ? "flex flex-col leading-1.5 p-4 border-indigo-200 bg-indigo-100 rounded-b-xl rounded-tl-xl rounded-bl-xl"
+    : "flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl";
+
+  const usernameClassNames = isCurrentUser
+    ? "text-sm font-semibold text-indigo-900"
+    : "text-sm font-semibold text-gray-900";
+
   return (
-    <>
-      <li className="max-w-lg flex gap-x-2 sm:gap-x-4 me-11">
-        <img
-          className="inline-block h-9 w-9 rounded-full"
-          src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80"
-          alt="Image Description"
-        />
-
-        {/* Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3">
-          <h2 className="font-medium text-gray-800">How can we help?</h2>
-          <div className="space-y-1.5">
-            <p className="mb-1.5 text-sm text-gray-800">
-              You can ask questions like:
-            </p>
-            <ul className="list-disc list-outside space-y-1.5 ps-3.5">
-              <li className="text-sm text-gray-800">What's Preline UI?</li>
-
-              <li className="text-sm text-gray-800">
-                How many Starter Pages & Examples are there?
-              </li>
-
-              <li className="text-sm text-gray-800">Is there a PRO version?</li>
-            </ul>
-          </div>
-        </div>
-        {/* End Card */}
-      </li>
-      {/* End Chat */}
-
-      {/* Chat */}
-      <li className="flex ms-auto gap-x-2 sm:gap-x-4">
-        <div className="grow text-end space-y-3">
-          {/* Card */}
-          <div className="inline-block bg-blue-600 rounded-2xl p-4 shadow-sm">
-            <p className="text-sm text-white">what's preline ui?</p>
-          </div>
-          {/* End Card */}
-        </div>
-
-        <span className="flex-shrink-0 inline-flex items-center justify-center h-[2.375rem] w-[2.375rem] rounded-full bg-gray-600">
-          <span className="text-sm font-medium text-white leading-none">
-            AZ
+    <div className={messageClassNames}>
+      <div className={messageBubbleClassNames}>
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+          <span className={usernameClassNames}>
+            {senderUsername}
           </span>
-        </span>
-      </li>
-      {/* End Chat */}
-
-      {/* Chat Bubble */}
-      <li className="max-w-lg flex gap-x-2 sm:gap-x-4 me-11">
-        <img
-          className="inline-block h-9 w-9 rounded-full"
-          src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80"
-          alt="Image Description"
-        />
-
-        {/* Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3">
-          <p className="text-sm text-gray-800">
-            Preline UI is an open-source set of prebuilt UI components based on
-            the utility-first Tailwind CSS framework.
-          </p>
-          <div className="space-y-1.5">
-            <p className="text-sm text-gray-800">
-              Here're some links to get started
-            </p>
-            <ul>
-              <li>
-                <a
-                  className="text-sm text-blue-600 decoration-2 hover:underline font-medium"
-                  href="../docs/index.html"
-                >
-                  Installation Guide
-                </a>
-              </li>
-              <li>
-                <a
-                  className="text-sm text-blue-600 decoration-2 hover:underline font-medium"
-                  href="../docs/frameworks.html"
-                >
-                  Framework Guides
-                </a>
-              </li>
-            </ul>
-          </div>
+          <span className="text-xs font-normal text-gray-500">
+            {timestamp.toString()}
+          </span>
         </div>
-        {/* End Card */}
-      </li>
-    </>
+        <div className={messageContentClassNames}>
+          <p className="text-sm font-normal text-gray-900"> {content}</p>
+        </div>
+      </div>
+    </div>
   );
 };
 

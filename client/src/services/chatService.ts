@@ -2,12 +2,13 @@ import { ServerResponse } from "http";
 
 interface Message {
   senderId: string;
+  senderUsername: string;
   content: string;
 }
 
 async function sendMessage(message: Message): Promise<ServerResponse> {
   try {
-    const response = await fetch("http://localhost:3000/api/messages/send", {
+    const response = await fetch("http://localhost:3001/api/messages/send", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

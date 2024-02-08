@@ -6,7 +6,6 @@ const SendMessageForm: React.FC = () => {
   const [message, setMessages] = useState("");
 
   const { user } = useUser();
-  const userId = user?.id;
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -21,15 +20,14 @@ const SendMessageForm: React.FC = () => {
 
   const handleClick = async () => {
     if (!message.trim()) return;
-    if (userId == undefined) throw new Error("User ID was not found");
+    if (user == null) return new Error("User was not found");
 
     try {
-      const response = await sendMessage({
-        senderId: userId,
+      await sendMessage({
+        senderId: user.id,
+        senderUsername: user.username!,
         content: message,
       });
-
-      console.log("Message sent successfully", response);
     } catch (error) {
       throw new Error("Failed to send message");
     }
