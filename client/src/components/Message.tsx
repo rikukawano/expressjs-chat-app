@@ -4,7 +4,7 @@ interface MessageProps {
   senderId: string;
   senderUsername: string;
   content: string;
-  timestamp: Date;
+  timestamp: string;
 }
 
 const Message: React.FC<MessageProps> = ({
@@ -40,7 +40,7 @@ const Message: React.FC<MessageProps> = ({
             {senderUsername}
           </span>
           <span className="text-xs font-normal text-gray-500">
-            {timestamp.toString()}
+            {timestamp}
           </span>
         </div>
         <div className={messageContentClassNames}>

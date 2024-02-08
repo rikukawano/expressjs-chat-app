@@ -1,5 +1,5 @@
 import { useState } from "react";
-import sendMessage from "../services/chatService";
+import { sendMessage } from "../services/chatService";
 import { useUser } from "@clerk/clerk-react";
 
 const SendMessageForm: React.FC = () => {
@@ -12,10 +12,6 @@ const SendMessageForm: React.FC = () => {
       e.preventDefault();
       handleClick();
     }
-  };
-
-  const handleInput = (value: string) => {
-    setMessages(value);
   };
 
   const handleClick = async () => {
@@ -40,7 +36,7 @@ const SendMessageForm: React.FC = () => {
         placeholder="Type your message..."
         className="flex-1 rounded-md border border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm resize-none h-12 p-2"
         value={message}
-        onChange={(e) => handleInput(e.target.value)}
+        onChange={(e) => setMessages(e.target.value)}
         onKeyDown={handleKeyPress}
       />
       <button

@@ -11,9 +11,7 @@ import Message from "./Message";
 import db from "../services/firebaseConfig";
 
 const MessageList: React.FC = () => {
-  const [messages, setMessages] = useState<
-    Array<{ content: any; senderId: any; senderUsername: any; timestamp: any }>
-  >([]);
+  const [messages, setMessages] = useState<{ content: string; senderId: string; senderUsername: string; timestamp: string }[]>([]);
 
   useEffect(() => {
     const messagesCollection = collection(db, "messages");

@@ -1,20 +1,58 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Bars3Icon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { UserButton } from "@clerk/clerk-react";
-
-const channels = [
-  { id: 1, name: "tl:dr", href: "#", current: false },
-  { id: 2, name: "daily-news", href: "#", current: false },
-  { id: 3, name: "workation", href: "#", current: false },
-];
+import CreateChannelComponent from "./CreateChannelComponent";
+import {
+  QuerySnapshot,
+  collection,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import db from "../services/firebaseConfig";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Sidebar() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [channels, setChannels] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    const channelsCollection = collection(db, "channels");
+    const channelsQuery = query(channelsCollection, orderBy("timestamp"));
+
+    // Fetch all channels once on component mount
+    const fetchChannels = async () => {
+      getDocs(channelsQuery).then((snapshot: QuerySnapshot) => {
+        const initialChannels = snapshot.docs.map((doc) => ({
+          id: doc.data().id,
+          name: doc.data().name,
+        }));
+        setChannels(initialChannels);
+      });
+    };
+
+    // Subscribe to channels after initial fetch
+    const subscribeToChannels = () => {
+      onSnapshot(channelsCollection, (snapshot: QuerySnapshot) => {
+        const updatedChannels = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          name: doc.data().name,
+        }));
+        setChannels(updatedChannels);
+      });
+    };
+
+    fetchChannels();
+    const unsubscribe = subscribeToChannels();
+
+    // Cleanup subscription on component unmount
+    return () => unsubscribe;
+  }, []);
 
   return (
     <>
@@ -87,24 +125,13 @@ export default function Sidebar() {
                         </div>
                         <ul role="list" className="-mx-2 mt-2 space-y-1">
                           {channels.map((channel) => (
-                            <li key={channel.name}>
-                              <a
-                                href={channel.href}
-                                className={classNames(
-                                  channel.current
-                                    ? "bg-gray-50 text-indigo-600"
-                                    : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
-                                  "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                )}
-                              >
+                            <li key={channel.id}>
+                              <a className="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
                                 <span className="truncate">{channel.name}</span>
                               </a>
                             </li>
                           ))}
-                          <a className="text-indigo-600 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold mt-8">
-                            <PlusIcon className="text-indigo-600 h-6 w-6 shrink-0" />
-                            Create a channel
-                          </a>
+                          <CreateChannelComponent channels={channels} />
                         </ul>
                       </li>
                     </ul>
@@ -135,30 +162,21 @@ export default function Sidebar() {
                 </div>
                 <ul role="list" className="-mx-2 mt-2 space-y-1">
                   {channels.map((channel) => (
-                    <li key={channel.name}>
-                      <a
-                        href={channel.href}
-                        className={classNames(
-                          channel.current
-                            ? "bg-gray-50 text-indigo-600"
-                            : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
-                          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                        )}
-                      >
+                    <li key={channel.id}>
+                      <a className="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
                         <span className="truncate">{channel.name}</span>
                       </a>
                     </li>
                   ))}
-                  <a className="text-indigo-600 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold mt-8">
-                    <PlusIcon className="text-indigo-600 h-6 w-6 shrink-0" />
-                    Create a channel
-                  </a>
+                  <li>
+                    <CreateChannelComponent channels={channels} />
+                  </li>
                 </ul>
               </li>
               <li className="-mx-6 mt-auto">
                 <div className="relative">
                   <div className="w-full flex items-center p-6">
-                    <UserButton afterSignOutUrl='/sign-in' />
+                    <UserButton afterSignOutUrl="/sign-in" />
                   </div>
                 </div>
               </li>
@@ -179,14 +197,6 @@ export default function Sidebar() {
         <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
           Dashboard
         </div>
-        <a href="#">
-          <span className="sr-only">Your profile</span>
-          <img
-            className="h-8 w-8 rounded-full bg-gray-50"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-            alt=""
-          />
-        </a>
       </div>
     </>
   );
