@@ -17,10 +17,10 @@ const firebaseConfig_1 = require("../firebaseConfig");
 const firestore_1 = require("firebase/firestore");
 const router = express_1.default.Router();
 router.post("/send", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { senderId, senderUsername, content } = req.body;
+    const { senderId, senderUsername, content, channelId } = req.body.message;
     try {
-        const messagesCollection = (0, firestore_1.collection)(firebaseConfig_1.db, "messages");
-        const docRef = yield (0, firestore_1.addDoc)(messagesCollection, {
+        const channelMessagesCollection = (0, firestore_1.collection)(firebaseConfig_1.db, `channels/${channelId}/messages`);
+        const docRef = yield (0, firestore_1.addDoc)(channelMessagesCollection, {
             senderId,
             senderUsername,
             content,

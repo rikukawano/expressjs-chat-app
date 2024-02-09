@@ -10,9 +10,9 @@ interface CreateChannelComponentProps {
   channels: { id: string; name: string }[];
 }
 
-const CreateChannelComponent: React.FC<CreateChannelComponentProps> = ({
+export default function CreateChannelComponent({
   channels,
-}) => {
+}: CreateChannelComponentProps) {
   const [showInputField, setShowInputField] = useState<boolean>(false);
 
   // Function to close the input field when clicking outside of the component
@@ -48,17 +48,17 @@ const CreateChannelComponent: React.FC<CreateChannelComponentProps> = ({
       )}
     </div>
   );
-};
+}
 
 interface CreateChannelInputFieldProps {
   setShowInputField: Dispatch<SetStateAction<boolean>>;
   channels: { id: string; name: string }[];
 }
 
-const CreateChannelInputField: React.FC<CreateChannelInputFieldProps> = ({
+function CreateChannelInputField({
   setShowInputField,
   channels,
-}) => {
+}: CreateChannelInputFieldProps) {
   const [value, setValue] = useState<string>("");
   const [isError, setIsError] = useState(false);
 
@@ -110,6 +110,4 @@ const CreateChannelInputField: React.FC<CreateChannelInputFieldProps> = ({
       )}
     </>
   );
-};
-
-export default CreateChannelComponent;
+}

@@ -1,19 +1,20 @@
 import { ServerResponse } from "http";
 
-interface Message {
+interface SendMessage {
   senderId: string;
   senderUsername: string;
   content: string;
+  channelId: string;
 }
 
-async function sendMessage(message: Message): Promise<ServerResponse> {
+async function sendMessage(message: SendMessage): Promise<ServerResponse> {
   try {
     const response = await fetch("http://localhost:3001/api/messages/send", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(message),
+      body: JSON.stringify({ message }),
     });
 
     if (!response.ok) {

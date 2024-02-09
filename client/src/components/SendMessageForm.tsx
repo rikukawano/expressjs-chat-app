@@ -2,9 +2,14 @@ import { useState } from "react";
 import { sendMessage } from "../services/chatService";
 import { useUser } from "@clerk/clerk-react";
 
-const SendMessageForm: React.FC = () => {
-  const [message, setMessages] = useState("");
+interface SendMessageFormProps {
+  currentChannel: string;
+}
 
+export default function SendMessageForm({
+  currentChannel,
+}: SendMessageFormProps) {
+  const [message, setMessages] = useState("");
   const { user } = useUser();
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -23,6 +28,7 @@ const SendMessageForm: React.FC = () => {
         senderId: user.id,
         senderUsername: user.username!,
         content: message,
+        channelId: currentChannel,
       });
     } catch (error) {
       throw new Error("Failed to send message");
@@ -47,6 +53,4 @@ const SendMessageForm: React.FC = () => {
       </button>
     </div>
   );
-};
-
-export default SendMessageForm;
+}

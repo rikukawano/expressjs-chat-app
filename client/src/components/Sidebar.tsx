@@ -1,58 +1,25 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { UserButton } from "@clerk/clerk-react";
 import CreateChannelComponent from "./CreateChannelComponent";
-import {
-  QuerySnapshot,
-  collection,
-  getDocs,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import db from "../services/firebaseConfig";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Sidebar() {
+interface SideBarProps {
+  channels: { id: string; name: string }[];
+  currentChannel: string;
+  setCurrentChannel: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function Sidebar({
+  channels,
+  currentChannel,
+  setCurrentChannel,
+}: SideBarProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [channels, setChannels] = useState<{ id: string; name: string }[]>([]);
-
-  useEffect(() => {
-    const channelsCollection = collection(db, "channels");
-    const channelsQuery = query(channelsCollection, orderBy("timestamp"));
-
-    // Fetch all channels once on component mount
-    const fetchChannels = async () => {
-      getDocs(channelsQuery).then((snapshot: QuerySnapshot) => {
-        const initialChannels = snapshot.docs.map((doc) => ({
-          id: doc.data().id,
-          name: doc.data().name,
-        }));
-        setChannels(initialChannels);
-      });
-    };
-
-    // Subscribe to channels after initial fetch
-    const subscribeToChannels = () => {
-      onSnapshot(channelsCollection, (snapshot: QuerySnapshot) => {
-        const updatedChannels = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().name,
-        }));
-        setChannels(updatedChannels);
-      });
-    };
-
-    fetchChannels();
-    const unsubscribe = subscribeToChannels();
-
-    // Cleanup subscription on component unmount
-    return () => unsubscribe;
-  }, []);
 
   return (
     <>
@@ -125,10 +92,20 @@ export default function Sidebar() {
                         </div>
                         <ul role="list" className="-mx-2 mt-2 space-y-1">
                           {channels.map((channel) => (
-                            <li key={channel.id}>
-                              <a className="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+                            <li
+                              key={channel.id}
+                              onClick={() => setCurrentChannel(channel.id)}
+                            >
+                              <div
+                                className={classNames(
+                                  channel.id === currentChannel
+                                    ? "bg-gray-50 text-indigo-600"
+                                    : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                                  "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold cursor-pointer"
+                                )}
+                              >
                                 <span className="truncate">{channel.name}</span>
-                              </a>
+                              </div>
                             </li>
                           ))}
                           <CreateChannelComponent channels={channels} />
@@ -162,10 +139,17 @@ export default function Sidebar() {
                 </div>
                 <ul role="list" className="-mx-2 mt-2 space-y-1">
                   {channels.map((channel) => (
-                    <li key={channel.id}>
-                      <a className="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+                    <li key={channel.id} onClick={() => setCurrentChannel(channel.id)}>
+                      <div
+                        className={classNames(
+                          channel.id === currentChannel
+                            ? "bg-gray-50 text-indigo-600"
+                            : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold cursor-pointer"
+                        )}
+                      >
                         <span className="truncate">{channel.name}</span>
-                      </a>
+                      </div>
                     </li>
                   ))}
                   <li>
