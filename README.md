@@ -5,7 +5,7 @@ Welcome to my XYZ Chat! This web application is designed to provide a seamless a
 ### App Snapshot 📸
 Want to see our Chat App in action? Here's a snapshot of what you can expect:
 
-![Chat App Interface](./assets/screenshot.png)
+![Chat App Interface](./assets/screenshot.jpeg)
 
 ## Getting Started 🚀
 
